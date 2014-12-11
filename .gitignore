@@ -52,6 +52,6 @@ docs/_build
 .ve
 .bootstrap
 
-*.csv
+src/**/*.csv
 *.xlsx
 *.sublime-workspace

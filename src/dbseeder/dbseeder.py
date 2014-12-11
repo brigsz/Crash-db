@@ -7,7 +7,7 @@ dbseeder
 the dbseeder module
 '''
 
-from os.path import basename, splitext
+from os.path import basename, splitext, join
 import timeit
 import glob
 import csv
@@ -16,11 +16,12 @@ from services import Caster
 
 
 class DbSeeder(object):
+
     def __init__(self):
         super(DbSeeder, self).__init__()
 
     def process(self, location):
-        files = glob.glob(location + '*.csv')
+        files = self._get_files(location)
 
         for file in files:
             start = timeit.default_timer()
@@ -32,37 +33,58 @@ class DbSeeder(object):
                     self._etl_row(file, row)
 
             end = timeit.default_timer()
-            print '{}: {}'.format(file, end-start)
+            print '{}: {}'.format(file, end - start)
+
+    def _get_files(self, location):
+        if not location:
+            raise Exception('Pass in a location containing csv files to import.')
+
+        files = glob.glob(join(location, '*.csv'))
+
+        if len(files) < 1:
+            raise Exception(location, 'No csv files found.')
+
+        return files
 
     def _etl_row(self, file, row):
         file_name = splitext(basename(file))[0]
-        func = None
 
         if 'crash' in file_name:
-            func = self._etl_crash
-        elif 'drivers' in file_name:
-            func = self._etl_driver
+            input_keys = Schema.crash_input_keys
+            etl_keys = Schema.crash_etl_keys
+            lookup = Schema.crash
+        elif 'driver' in file_name:
+            input_keys = Schema.driver_input_keys
+            etl_keys = Schema.driver_etl_keys
+            lookup = Schema.driver
         elif 'rollup' in file_name:
-            func = self._etl_rollup
+            input_keys = Schema.rollup_input_keys
+            etl_keys = Schema.rollup_etl_keys
+            lookup = Schema.rollup
         else:
             raise Exception(file, 'Not a part of the crash, drivers, rollops convention')
 
-        return func(row)
+        return self._etl_row_generic(row, lookup, input_keys, etl_keys)
 
-    def _etl_crash(self, row):
-        input_keys = Schema.rollup.keys()
-        etl_keys = map(lambda x: x['map'], Schema.rollup.values())
-
+    def _etl_row_generic(self, row, lookup, input_keys, etl_keys):
         etl_row = dict.fromkeys(etl_keys)
 
         for key in row.keys():
             if key not in input_keys:
                 continue
 
-            etl_info = Schema.rollup[key]
+            etl_info = lookup[key]
 
             value = row[key]
             etl_value = Caster.cast(value, etl_info['type'])
+
+            if 'lookup' in etl_info.keys():
+                lookup_name = etl_info['lookup']
+                values = Lookup.__dict__[lookup_name]
+
+                if etl_value in values.keys():
+                    etl_value = values[etl_value]
+
             etl_row[etl_info['map']] = etl_value
 
         return etl_row

@@ -4,3 +4,9 @@ Crash DB
 ========
 
 A db seeder etl tool for crash data.
+
+### Usage
+`python -m dbseeder path/to/csv's`
+
+### Tests
+`tox`

@@ -14,8 +14,16 @@ from dbseeder.dbseeder import DbSeeder
 
 class TestDbSeeder(unittest.TestCase):
 
-    def test_etl_crash(self):
-        patient = DbSeeder()
+    patient = None
+
+    def setUp(self):
+        self.patient = DbSeeder()
+        self.maxDiff = None
+
+    def test_process(self):
+        self.patient.process('.\\tests\\data')
+
+    def test_etl_rollup(self):
         row = {
             'BICYCLIST_INVOLVED': 'N',
             'COMMERCIAL_MOTOR_VEH_INVOLVED': 'Y',
@@ -49,8 +57,108 @@ class TestDbSeeder(unittest.TestCase):
             'pedestrian': 0,
             'teenager': 0,
             'animal_wild': 0
-         }
+        }
 
-        self.maxDiff = None
-        actual = patient._etl_crash(row)
+        actual = self.patient._etl_row('//some//path//to//rollup.csv', row)
         self.assertEqual(actual, expected)
+
+    def test_etl_crash(self):
+        row = {
+            'CASE_NUMBER': '11UT0004',
+            'CITY': '',
+            'COUNTY_NAME': 'UTAH',
+            'CRASH_DATETIME': '2011-01-01 12:09:00',
+            'CRASH_ID': '10376162',
+            'CRASH_SEVERITY_ID': '1',
+            'DAY': '7',
+            'FIRST_HARMFUL_EVENT_ID': '59',
+            'HOUR': '12',
+            'MAIN_ROAD_NAME': 'SR 189',
+            'MANNER_COLLISION_ID': '96',
+            'MILEPOINT': '12.2',
+            'MINUTE': '9',
+            'MONTH': '1',
+            'OFFICER_DEPARTMENT_CODE': 'UTUHP1000',
+            'OFFICER_DEPARTMENT_NAME': 'UHPORE.UT.USA',
+            'ROADWAY_SURF_CONDITION_ID': '5',
+            'ROUTE_NUMBER': '189',
+            'UTM_X': '450007',
+            'UTM_Y': '4466748',
+            'WEATHER_CONDITION_ID': '1',
+            'WORK_ZONE_RELATED': 'N',
+            'YEAR': '2011'
+        }
+
+        expected = {
+            'id': 10376162,
+            'date': datetime.datetime(2011, 1, 1, 12, 9, 0),
+            'year': 2011,
+            'month': 1,
+            'day': 7,
+            'hour': 12,
+            'minute': 9,
+            'construction': 0,
+            'weather_condition': 'Clear',
+            'road_condition': 'Ice',
+            'event': 'Snow Bank',
+            'collision_type': None,
+            'severity': 'No Injury/PDO',
+            'case_number': '11UT0004',
+            'officer_name': 'UHPORE.UT.USA',
+            'officer_department': 'UTUHP1000',
+            'road_name': 'SR 189',
+            'route_number': 189,
+            'milepost': 12.2,
+            'city': None,
+            'county': 'UTAH',
+            'utm_x': 450007.0,
+            'utm_y': 4466748.0
+        }
+
+        actual = self.patient._etl_row('//some//path//to//crash.csv', row)
+        self.assertEqual(actual, expected)
+
+    def test_etl_driver(self):
+        row = {
+            'PEOPLE_DETAIL_ID': '11699638',
+            'DRIVER_CONTRIB_CIRCUM_2_ID': '4',
+            'DRIVER_DISTRACTION_ID': '0',
+            'DRIVER_CONTRIB_CIRCUM_1_ID': '2',
+            'CRASH_DATETIME': '2011-01-05 10:39:00',
+            'VEHICLE_NUM': '1',
+            'PERSON_ID': '1',
+            'CRASH_ID': '10376425',
+            'DRIVER_CONDITION_ID': '1'
+        }
+
+        expected = {
+            'id': 10376425,
+            'date': datetime.datetime(2011, 1, 5, 10, 39, 0),
+            'vehicle_count': 1,
+            'contributing_cause': 'Too Fast for Conditions',
+            'alternate_cause': 'Failed to Keep in Proper Lane',
+            'driver_condition': 'Appearing Normal',
+            'driver_distraction': 'None'
+        }
+
+        actual = self.patient._etl_row('//some//path//to//drivers.csv', row)
+        self.assertEqual(actual, expected)
+
+    def test_etl_wrong_file_name(self):
+        self.assertRaises(Exception, self.patient._etl_row, '//some//csv.csv')
+
+    def test_get_files_without_trailing_slashes(self):
+        actual = self.patient._get_files('.\\tests\\data')
+
+        self.assertEqual(len(actual), 3)
+
+    def test_get_files_with_trailing_slashes(self):
+        actual = self.patient._get_files('.\\tests\\data\\')
+
+        self.assertEqual(len(actual), 3)
+
+    def test_get_files_empty_location(self):
+        self.assertRaises(Exception, self.patient._get_files, '')
+
+    def test_get_files_raises_if_empty(self):
+        self.assertRaises(Exception, self.patient._get_files, ['/nowhere/land/'])

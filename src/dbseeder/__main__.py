@@ -12,13 +12,14 @@ def main(argv=()):
 
     Does stuff.
     """
+    print(argv)
 
     argv = sys.argv
 
     print(argv)
 
-    seeder = DbSeeder(argv[1])
-    seeder.process(argv[2])
+    seeder = DbSeeder()
+    seeder.process(argv[1])
 
     return 0
 

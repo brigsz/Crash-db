@@ -13,7 +13,7 @@ class Schema(object):
     def __init__(self):
         super(Schema, self).__init__()
 
-    drivers = {
+    driver = {
         'CRASH_ID': {
             'type': 'int',
             'map': 'id'
@@ -27,85 +27,198 @@ class Schema(object):
             'map': 'vehicle_count'
         },
         'DRIVER_CONTRIB_CIRCUM_1_ID': {
-            'type': 'string',
-            'map': 'contributing_cause'
+            'type': 'int',
+            'map': 'contributing_cause',
+            'lookup': 'cause'
         },
         'DRIVER_CONTRIB_CIRCUM_2_ID': {
-            'type': 'string',
-            'map': 'alternate_cause'
+            'type': 'int',
+            'map': 'alternate_cause',
+            'lookup': 'cause'
         },
         'DRIVER_CONDITION_ID': {
-            'type': 'string',
-            'map': 'driver_condition'
+            'type': 'int',
+            'map': 'driver_condition',
+            'lookup': 'driver_condition'
         },
         'DRIVER_DISTRACTION_ID': {
-            'type': 'string',
-            'map': 'driver_distraction'
+            'type': 'int',
+            'map': 'driver_distraction',
+            'lookup': 'driver_distraction'
         }
     }
 
+    driver_input_keys = driver.keys()
+    driver_etl_keys = map(lambda x: x['map'], driver.values())
+
     rollup = {
-        'BICYCLIST_INVOLVED':{
+        'BICYCLIST_INVOLVED': {
             'type': 'bit',
             'map': 'bicycle'
         },
-            'COMMERCIAL_MOTOR_VEH_INVOLVED':{
+        'COMMERCIAL_MOTOR_VEH_INVOLVED': {
             'type': 'bit',
             'map': 'commercial_vehicle'
         },
-            'CRASH_DATETIME':{
+        'CRASH_DATETIME': {
             'type': 'date',
             'map': 'date'
         },
-            'CRASH_ID':{
+        'CRASH_ID': {
             'type': 'int',
             'map': 'id'
         },
-            'DOMESTIC_ANIMAL_RELATED':{
+        'DOMESTIC_ANIMAL_RELATED': {
             'type': 'bit',
             'map': 'animal_domestic'
         },
-            'DUI':{
+        'DUI': {
             'type': 'bit',
             'map': 'dui'
         },
-            'IMPROPER_RESTRAINT':{
+        'IMPROPER_RESTRAINT': {
             'type': 'bit',
             'map': 'improper_restraint'
         },
-            'INTERSECTION_RELATED':{
+        'INTERSECTION_RELATED': {
             'type': 'bit',
             'map': 'intersection'
         },
-            'MOTORCYCLE_INVOLVED':{
+        'MOTORCYCLE_INVOLVED': {
             'type': 'bit',
             'map': 'motorcycle'
         },
-            'NIGHT_DARK_CONDITION':{
+        'NIGHT_DARK_CONDITION': {
             'type': 'bit',
             'map': 'dark'
         },
-            'OLDER_DRIVER_INVOLVED':{
+        'OLDER_DRIVER_INVOLVED': {
             'type': 'bit',
             'map': 'elder'
         },
-            'OVERTURN_ROLLOVER':{
+        'OVERTURN_ROLLOVER': {
             'type': 'bit',
             'map': 'rollover'
         },
-            'PEDESTRIAN_INVOLVED':{
+        'PEDESTRIAN_INVOLVED': {
             'type': 'bit',
             'map': 'pedestrian'
         },
-            'TEENAGE_DRIVER_INVOLVED':{
+        'TEENAGE_DRIVER_INVOLVED': {
             'type': 'bit',
             'map': 'teenager'
         },
-            'WILD_ANIMAL_RELATED':{
+        'WILD_ANIMAL_RELATED': {
             'type': 'bit',
             'map': 'animal_wild'
         }
     }
+
+    rollup_input_keys = rollup.keys()
+    rollup_etl_keys = map(lambda x: x['map'], rollup.values())
+
+    crash = {
+        'CASE_NUMBER': {
+            'type': 'string',
+            'map': 'case_number'
+        },
+        'CITY': {
+            'type': 'string',
+            'map': 'city'
+        },
+        'COUNTY_NAME': {
+            'type': 'string',
+            'map': 'county'
+        },
+        'CRASH_DATETIME': {
+            'type': 'date',
+            'map': 'date'
+        },
+        'CRASH_ID': {
+            'type': 'int',
+            'map': 'id'
+        },
+        'CRASH_SEVERITY_ID': {
+            'type': 'int',
+            'map': 'severity',
+            'lookup': 'severity'
+        },
+        'DAY': {
+            'type': 'int',
+            'map': 'day'
+        },
+        'FIRST_HARMFUL_EVENT_ID': {
+            'type': 'int',
+            'map': 'event',
+            'lookup': 'event'
+        },
+        'HOUR': {
+            'type': 'int',
+            'map': 'hour'
+        },
+        'MAIN_ROAD_NAME': {
+            'type': 'string',
+            'map': 'road_name'
+        },
+        'MANNER_COLLISION_ID': {
+            'type': 'int',
+            'map': 'collision_type',
+            'lookup': 'collision_type'
+        },
+        'MILEPOINT': {
+            'type': 'float',
+            'map': 'milepost'
+        },
+        'MINUTE': {
+            'type': 'int',
+            'map': 'minute'
+        },
+        'MONTH': {
+            'type': 'int',
+            'map': 'month'
+        },
+        'OFFICER_DEPARTMENT_CODE': {
+            'type': 'string',
+            'map': 'officer_department'
+        },
+        'OFFICER_DEPARTMENT_NAME': {
+            'type': 'string',
+            'map': 'officer_name'
+        },
+        'ROADWAY_SURF_CONDITION_ID': {
+            'type': 'int',
+            'map': 'road_condition',
+            'lookup': 'road_condition'
+        },
+        'ROUTE_NUMBER': {
+            'type': 'int',
+            'map': 'route_number'
+        },
+        'UTM_X': {
+            'type': 'float',
+            'map': 'utm_x'
+        },
+        'UTM_Y': {
+            'type': 'float',
+            'map': 'utm_y'
+        },
+        'WEATHER_CONDITION_ID': {
+            'type': 'int',
+            'map': 'weather_condition',
+            'lookup': 'weather_condition'
+        },
+        'WORK_ZONE_RELATED': {
+            'type': 'bit',
+            'map': 'construction'
+        },
+        'YEAR': {
+            'type': 'int',
+            'map': 'year'
+        }
+    }
+
+    crash_input_keys = crash.keys()
+    crash_etl_keys = map(lambda x: x['map'], crash.values())
 
 
 class Lookup(object):
@@ -135,7 +248,7 @@ class Lookup(object):
         99: None
     }
 
-    road_conditions = {
+    road_condition = {
         1: 'Dry',
         2: 'Wet',
         3: 'Snow',
