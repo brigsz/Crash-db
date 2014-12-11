@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!usr/bin/env python
 # -*- coding: utf-8 -*-
 
 '''
@@ -10,6 +10,8 @@ test the dbseeder module
 import unittest
 import datetime
 from dbseeder.dbseeder import DbSeeder
+from os.path import join
+from os import sep
 
 
 class TestDbSeeder(unittest.TestCase):
@@ -21,7 +23,7 @@ class TestDbSeeder(unittest.TestCase):
         self.maxDiff = None
 
     def test_process(self):
-        self.patient.process('.\\tests\\data')
+        self.patient.process(join('.', 'tests', 'data'))
 
     def test_etl_rollup(self):
         row = {
@@ -59,7 +61,7 @@ class TestDbSeeder(unittest.TestCase):
             'animal_wild': 0
         }
 
-        actual = self.patient._etl_row('//some//path//to//rollup.csv', row)
+        actual = self.patient._etl_row(join('some', 'path', 'to', 'rollup.csv'), row)
         self.assertEqual(actual, expected)
 
     def test_etl_crash(self):
@@ -115,7 +117,7 @@ class TestDbSeeder(unittest.TestCase):
             'utm_y': 4466748.0
         }
 
-        actual = self.patient._etl_row('//some//path//to//crash.csv', row)
+        actual = self.patient._etl_row(join('some', 'path', 'to', 'crash.csv'), row)
         self.assertEqual(actual, expected)
 
     def test_etl_driver(self):
@@ -141,19 +143,19 @@ class TestDbSeeder(unittest.TestCase):
             'driver_distraction': 'None'
         }
 
-        actual = self.patient._etl_row('//some//path//to//drivers.csv', row)
+        actual = self.patient._etl_row(join('some', 'path', 'to', 'drivers.csv'), row)
         self.assertEqual(actual, expected)
 
     def test_etl_wrong_file_name(self):
-        self.assertRaises(Exception, self.patient._etl_row, '//some//csv.csv')
+        self.assertRaises(Exception, self.patient._etl_row, join('some', 'path', 'wrong.csv'))
 
     def test_get_files_without_trailing_slashes(self):
-        actual = self.patient._get_files('.\\tests\\data')
+        actual = self.patient._get_files(join('.', 'tests', 'data'))
 
         self.assertEqual(len(actual), 3)
 
     def test_get_files_with_trailing_slashes(self):
-        actual = self.patient._get_files('.\\tests\\data\\')
+        actual = self.patient._get_files('.{0}tests{0}data{0}'.format(sep))
 
         self.assertEqual(len(actual), 3)
 
@@ -161,4 +163,4 @@ class TestDbSeeder(unittest.TestCase):
         self.assertRaises(Exception, self.patient._get_files, '')
 
     def test_get_files_raises_if_empty(self):
-        self.assertRaises(Exception, self.patient._get_files, ['/nowhere/land/'])
+        self.assertRaises(Exception, self.patient._get_files, [join('some', 'path', 'to', 'nowhere')])
