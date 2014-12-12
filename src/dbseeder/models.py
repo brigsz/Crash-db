@@ -48,6 +48,18 @@ class Schema(object):
         }
     }
 
+    @staticmethod
+    def driver_schema_ordering(d):
+        return [
+            d['id'],
+            d['date'],
+            d['vehicle_count'],
+            d['contributing_cause'],
+            d['alternate_cause'],
+            d['driver_condition'],
+            d['driver_distraction']
+        ]
+
     driver_input_keys = driver.keys()
     driver_etl_keys = map(lambda x: x['map'], driver.values())
 
@@ -113,6 +125,26 @@ class Schema(object):
             'map': 'animal_wild'
         }
     }
+
+    @staticmethod
+    def rollup_schema_ordering(d):
+        return [
+            d['id'],
+            d['date'],
+            d['pedestrian'],
+            d['bicycle'],
+            d['motorcycle'],
+            d['improper_restraint'],
+            d['dui'],
+            d['intersection'],
+            d['animal_wild'],
+            d['animal_domestic'],
+            d['rollover'],
+            d['commercial_vehicle'],
+            d['teenager'],
+            d['elder'],
+            d['dark']
+        ]
 
     rollup_input_keys = rollup.keys()
     rollup_etl_keys = map(lambda x: x['map'], rollup.values())
@@ -216,6 +248,34 @@ class Schema(object):
             'map': 'year'
         }
     }
+
+    @staticmethod
+    def crash_schema_ordering(d):
+        return [
+            d['id'],
+            d['date'],
+            d['year'],
+            d['month'],
+            d['day'],
+            d['hour'],
+            d['minute'],
+            d['construction'],
+            d['weather_condition'],
+            d['road_condition'],
+            d['event'],
+            d['collision_type'],
+            d['severity'],
+            d['case_number'],
+            d['officer_name'],
+            d['officer_department'],
+            d['road_name'],
+            d['route_number'],
+            d['milepost'],
+            d['city'],
+            d['county'],
+            d['utm_x'],
+            d['utm_y']
+        ]
 
     crash_input_keys = crash.keys()
     crash_etl_keys = map(lambda x: x['map'], crash.values())

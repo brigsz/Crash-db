@@ -43,23 +43,38 @@ class TestDbSeeder(unittest.TestCase):
             'TEENAGE_DRIVER_INVOLVED': 'N',
             'WILD_ANIMAL_RELATED': 'N'
         }
-        expected = {
-            'bicycle': 0,
-            'commercial_vehicle': 1,
-            'date': datetime.datetime(2011, 1, 24, 15, 0, 0),
-            'id': 10380000,
-            'animal_domestic': 0,
-            'dui': 0,
-            'improper_restraint': 0,
-            'intersection': 0,
-            'motorcycle': 0,
-            'dark': 0,
-            'elder': 0,
-            'rollover': 0,
-            'pedestrian': 0,
-            'teenager': 0,
-            'animal_wild': 0
-        }
+        expected = [
+            # 'id':
+            10380000,
+            # 'date':
+            datetime.datetime(2011, 1, 24, 15, 0, 0),
+            # 'pedestrian':
+            0,
+            # 'bicycle':
+            0,
+            # 'motorcycle':
+            0,
+            # 'improper_restraint':
+            0,
+            # 'dui':
+            0,
+            # 'intersection':
+            0,
+            # 'animal_wild':
+            0,
+            # 'animal_domestic':
+            0,
+            # 'rollover':
+            0,
+            # 'commercial_vehicle':
+            1,
+            # 'teenager':
+            0,
+            # 'elder':
+            0,
+            # 'dark':
+            0
+        ]
 
         actual = self.patient._etl_row(join('some', 'path', 'to', 'rollup.csv'), row)
         self.assertEqual(actual, expected)
@@ -91,31 +106,54 @@ class TestDbSeeder(unittest.TestCase):
             'YEAR': '2011'
         }
 
-        expected = {
-            'id': 10376162,
-            'date': datetime.datetime(2011, 1, 1, 12, 9, 0),
-            'year': 2011,
-            'month': 1,
-            'day': 7,
-            'hour': 12,
-            'minute': 9,
-            'construction': 0,
-            'weather_condition': 'Clear',
-            'road_condition': 'Ice',
-            'event': 'Snow Bank',
-            'collision_type': None,
-            'severity': 'No Injury/PDO',
-            'case_number': '11UT0004',
-            'officer_name': 'UHPORE.UT.USA',
-            'officer_department': 'UTUHP1000',
-            'road_name': 'SR 189',
-            'route_number': 189,
-            'milepost': 12.2,
-            'city': None,
-            'county': 'UTAH',
-            'utm_x': 450007.0,
-            'utm_y': 4466748.0
-        }
+        expected = [
+            # 'id':
+            10376162,
+            # 'date':
+            datetime.datetime(2011, 1, 1, 12, 9, 0),
+            # 'year':
+            2011,
+            # 'month':
+            1,
+            # 'day':
+            7,
+            # 'hour':
+            12,
+            # 'minute':
+            9,
+            # 'construction':
+            0,
+            # 'weather_condition':
+            'Clear',
+            # 'road_condition':
+            'Ice',
+            # 'event':
+            'Snow Bank',
+            # 'collision_type':
+            None,
+            # 'severity':
+            'No Injury/PDO',
+            # 'case_number':
+            '11UT0004',
+            # 'officer_name':
+            'UHPORE.UT.USA',
+            # 'officer_department':
+            'UTUHP1000',
+            # 'road_name':
+            'SR 189',
+            # 'route_number':
+            189,
+            # 'milepost':
+            12.2,
+            # 'city':
+            None,
+            # 'county':
+            'UTAH',
+            # 'utm_x':
+            450007.0,
+            # 'utm_y':
+            4466748.0
+        ]
 
         actual = self.patient._etl_row(join('some', 'path', 'to', 'crash.csv'), row)
         self.assertEqual(actual, expected)
@@ -133,15 +171,22 @@ class TestDbSeeder(unittest.TestCase):
             'DRIVER_CONDITION_ID': '1'
         }
 
-        expected = {
-            'id': 10376425,
-            'date': datetime.datetime(2011, 1, 5, 10, 39, 0),
-            'vehicle_count': 1,
-            'contributing_cause': 'Too Fast for Conditions',
-            'alternate_cause': 'Failed to Keep in Proper Lane',
-            'driver_condition': 'Appearing Normal',
-            'driver_distraction': 'None'
-        }
+        expected = [
+            # 'id':
+            10376425,
+            # 'date':
+            datetime.datetime(2011, 1, 5, 10, 39, 0),
+            # 'vehicle_count':
+            1,
+            # 'contributing_cause':
+            'Too Fast for Conditions',
+            # 'alternate_cause':
+            'Failed to Keep in Proper Lane',
+            # 'driver_condition':
+            'Appearing Normal',
+            # 'driver_distraction':
+            'None'
+        ]
 
         actual = self.patient._etl_row(join('some', 'path', 'to', 'drivers.csv'), row)
         self.assertEqual(actual, expected)

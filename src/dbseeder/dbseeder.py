@@ -12,25 +12,31 @@ import timeit
 import glob
 import csv
 from models import Schema, Lookup
-from services import Caster
+from services import Caster, BrickLayer
 
 
 class DbSeeder(object):
 
     def __init__(self):
         super(DbSeeder, self).__init__()
+        self.brick_layer = BrickLayer()
 
     def process(self, location):
         files = self._get_files(location)
 
         for file in files:
+            file_name = splitext(basename(file))[0]
             start = timeit.default_timer()
+            items = []
 
             with open(file) as csv_file:
                 reader = csv.DictReader(csv_file)
 
                 for row in reader:
-                    self._etl_row(file, row)
+                    items.append(self._etl_row(file_name, row))
+
+            self.brick_layer.insert_rows(file_name, items)
+            items = []
 
             end = timeit.default_timer()
             print '{}: {}'.format(file, end - start)
@@ -46,27 +52,28 @@ class DbSeeder(object):
 
         return files
 
-    def _etl_row(self, file, row):
-        file_name = splitext(basename(file))[0]
-
+    def _etl_row(self, file_name, row):
         if 'crash' in file_name:
             input_keys = Schema.crash_input_keys
             etl_keys = Schema.crash_etl_keys
             lookup = Schema.crash
+            formatter = Schema.crash_schema_ordering
         elif 'driver' in file_name:
             input_keys = Schema.driver_input_keys
             etl_keys = Schema.driver_etl_keys
             lookup = Schema.driver
+            formatter = Schema.driver_schema_ordering
         elif 'rollup' in file_name:
             input_keys = Schema.rollup_input_keys
             etl_keys = Schema.rollup_etl_keys
             lookup = Schema.rollup
+            formatter = Schema.rollup_schema_ordering
         else:
             raise Exception(file, 'Not a part of the crash, drivers, rollops convention')
 
-        return self._etl_row_generic(row, lookup, input_keys, etl_keys)
+        return self._etl_row_generic(row, lookup, input_keys, etl_keys, formatter)
 
-    def _etl_row_generic(self, row, lookup, input_keys, etl_keys):
+    def _etl_row_generic(self, row, lookup, input_keys, etl_keys, formatter=None):
         etl_row = dict.fromkeys(etl_keys)
 
         for key in row.keys():
@@ -86,5 +93,8 @@ class DbSeeder(object):
                     etl_value = values[etl_value]
 
             etl_row[etl_info['map']] = etl_value
+
+        if formatter:
+            return formatter(etl_row)
 
         return etl_row

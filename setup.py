@@ -16,6 +16,29 @@ def read(*names, **kwargs):
         encoding=kwargs.get("encoding", "utf8")
     ).read()
 
+from setuptools.command.test import test as TestCommand
+import sys
+
+
+class Tox(TestCommand):
+    user_options = [('tox-args=', 'a', "Arguments to pass to tox")]
+
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
+        self.tox_args = None
+
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+
+    def run_tests(self):
+        # import here, cause outside the eggs aren't loaded
+        import tox
+        import shlex
+        errno = tox.cmdline(args=shlex.split(self.tox_args))
+        sys.exit(errno)
+
 setup(
     name="crash-dbseeder",
     version="0.1.0",
@@ -46,7 +69,8 @@ setup(
         # eg: "keyword1", "keyword2", "keyword3",
     ],
     install_requires=[
-        "python-dateutil",
+        "python-dateutil==2.3"
+        # ,"ceODBC==2.0.1"
     ],
     extras_require={
         # eg: 'rst': ["docutils>=0.11"],
@@ -56,5 +80,12 @@ setup(
             "dbseeder = dbseeder.__main__:main"
         ]
     },
-    tests_require=['nose>=1.0', 'coverage'],
+    cmdclass={
+        'test': Tox
+    },
+    tests_require=[
+        'tox',
+        'nose==1.3.4',
+        'coverage==3.7.1'
+    ],
 )

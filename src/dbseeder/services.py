@@ -8,6 +8,7 @@ The basic services
 '''
 
 import datetime
+# import ceODBC as odbc
 from dateutil.parser import parse
 
 
@@ -60,3 +61,42 @@ class Caster(object):
         if value.lower() == 'y':
             return 1
         return 0
+
+
+class BrickLayer(object):
+
+    """inserts the records into the database"""
+
+    def __init__(self, connection_string=None):
+        super(BrickLayer, self).__init__()
+
+        self.insert_statements = {
+            'crash': 'INSERT INTO Crash VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'rollup': 'INSERT INTO Rollup VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'driver': 'INSERT INTO Driver VALUES (?, ?, ?, ?, ?, ?, ?)'
+        }
+        self.connection_string = connection_string
+
+        if not self.connection_string:
+            self.connection_string = (
+                r'Driver={SQL Server};' +
+                r'Server=(local)\SQLEXPRESS;' +
+                r'Database=crash;' +
+                r'Trusted_Connection=Yes;'
+            )
+
+    def insert_rows(self, table_name, rows):
+        if table_name.lower() not in self.insert_statements.keys():
+            raise Exception(table_name, 'Do not know how to insert this type of record')
+
+        # connection = odbc.connect(self.connection_string)
+        # cursor = connection.cursor()
+
+        # command = self.insert_statements[table_name.lower()]
+
+        # try:
+        #     cursor.executemany(command, rows)
+        #     connection.commit()
+        # finally:
+        #     cursor.close()
+        #     connection.close()
