@@ -8,7 +8,7 @@ The basic services
 '''
 
 import datetime
-# import ceODBC as odbc
+import ceODBC as odbc
 from dateutil.parser import parse
 
 
@@ -89,14 +89,14 @@ class BrickLayer(object):
         if table_name.lower() not in self.insert_statements.keys():
             raise Exception(table_name, 'Do not know how to insert this type of record')
 
-        # connection = odbc.connect(self.connection_string)
-        # cursor = connection.cursor()
+        connection = odbc.connect(self.connection_string)
+        cursor = connection.cursor()
 
-        # command = self.insert_statements[table_name.lower()]
+        command = self.insert_statements[table_name.lower()]
 
-        # try:
-        #     cursor.executemany(command, rows)
-        #     connection.commit()
-        # finally:
-        #     cursor.close()
-        #     connection.close()
+        try:
+            cursor.executemany(command, rows)
+            connection.commit()
+        finally:
+            cursor.close()
+            connection.close()

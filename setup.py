@@ -70,7 +70,9 @@ setup(
     ],
     install_requires=[
         "python-dateutil==2.3"
-        # ,"ceODBC==2.0.1"
+    ],
+    dependency_links=[
+        "http://iweb.dl.sourceforge.net/project/ceodbc/2.0.1/ceODBC-2.0.1.tar.gz"
     ],
     extras_require={
         # eg: 'rst': ["docutils>=0.11"],
