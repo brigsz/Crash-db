@@ -12,6 +12,7 @@ import datetime
 from dbseeder.dbseeder import DbSeeder
 from os.path import join
 from os import sep
+from nose.plugins.skip import SkipTest
 
 
 class TestDbSeeder(unittest.TestCase):
@@ -23,6 +24,7 @@ class TestDbSeeder(unittest.TestCase):
         self.maxDiff = None
 
     def test_process(self):
+        raise SkipTest
         self.patient.process(join('.', 'tests', 'data'))
 
     def test_etl_rollup(self):
@@ -204,7 +206,7 @@ class TestDbSeeder(unittest.TestCase):
 
         self.assertEqual(len(actual), 3)
 
-    def test_get_files_empty_location(self):
+    def test_get_files_empty_location_raises_exception(self):
         self.assertRaises(Exception, self.patient._get_files, '')
 
     def test_get_files_raises_if_empty(self):
@@ -224,7 +226,7 @@ class TestDbSeeder(unittest.TestCase):
         self.assertIsNone(actual)
 
     def test_get_lengths(self):
-        actual = self.patient.get_lengths(join('.', 'tests', 'data'))['crash']
+        actual = self.patient.get_lengths(join('.', 'tests', 'data'))
 
         expected = {
             'CASE_NUMBER': 92,
@@ -235,4 +237,4 @@ class TestDbSeeder(unittest.TestCase):
             'OFFICER_DEPARTMENT_NAME': 13
         }
 
-        self.assertEqual(actual, expected)
+        self.assertEqual(actual['crash'], expected)

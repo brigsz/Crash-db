@@ -82,6 +82,8 @@ class DbSeeder(object):
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(items)
 
+        return items
+
     def _get_files(self, location):
         if not location:
             raise Exception('Pass in a location containing csv files to import.')
