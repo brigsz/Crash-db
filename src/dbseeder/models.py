@@ -16,7 +16,7 @@ class Schema(object):
     driver = {
         'CRASH_ID': {
             'type': 'int',
-            'map': 'id'
+            'map': 'crash_id'
         },
         'CRASH_DATETIME': {
             'type': 'date',
@@ -51,7 +51,7 @@ class Schema(object):
     @staticmethod
     def driver_schema_ordering(d):
         return [
-            d['id'],
+            d['crash_id'],
             d['date'],
             d['vehicle_count'],
             d['contributing_cause'],
@@ -168,7 +168,7 @@ class Schema(object):
         },
         'CRASH_ID': {
             'type': 'int',
-            'map': 'id'
+            'map': 'crash_id'
         },
         'CRASH_SEVERITY_ID': {
             'type': 'int',
@@ -252,7 +252,7 @@ class Schema(object):
     @staticmethod
     def crash_schema_ordering(d):
         return [
-            d['id'],
+            d['crash_id'],
             d['date'],
             d['year'],
             d['month'],
@@ -352,6 +352,13 @@ class Lookup(object):
         29: 'Light Rail',
         30: 'Passenger Heavy Rail',
         31: 'Thrown or Fallen Object',
+        32: None,
+        33: None,
+        34: None,
+        35: None,
+        36: None,
+        37: None,
+        38: None,
         39: 'Other Non-Fixed Object*',
         40: 'Guardrail',
         41: 'Concrete Barrier',
@@ -396,6 +403,7 @@ class Lookup(object):
         88: None,
         89: None,
         96: None,
+        97: None,
         99: None
     }
 

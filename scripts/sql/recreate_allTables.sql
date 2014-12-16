@@ -17,7 +17,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[Crash](
-	[id] [int] NOT NULL,
+	[id] [int] IDENTITY NOT NULL,
+	[crash_id] [int] NOT NULL,
 	[date] [date] NULL,
 	[year] [int] NULL,
 	[month] [int] NULL,
@@ -30,7 +31,7 @@ CREATE TABLE [dbo].[Crash](
 	[event] [nchar](100) NULL,
 	[collision_type] [nchar](50) NULL,
 	[severity] [nchar](50) NULL,
-	[case_number] [nchar](250) NULL,
+	[case_number] [nchar](400) NULL,
 	[officer_name] [nchar](100) NULL,
 	[officer_department] [nchar](100) NULL,
 	[road_name] [nchar](100) NULL,
@@ -67,13 +68,14 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[Driver](
-    [id] [int] NOT NULL,
+    [id] [int] IDENTITY NOT NULL,
+    [driver_id] [int] NOT NULL,
     [date] [date] NULL,
     [vehicle_count] [int] NULL,
     [contributing_cause] [nchar](100) NULL,
     [alternate_cause] [nchar](100) NULL,
     [driver_condition] [nchar](100) NULL,
-    [driver_distraction] [nchar](100) NULL,
+    [driver_distraction] [nchar](100) NULL
  CONSTRAINT [PK_Driver] PRIMARY KEY CLUSTERED
 (
     [id] ASC

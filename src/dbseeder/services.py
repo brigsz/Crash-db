@@ -70,6 +70,7 @@ class BrickLayer(object):
     def __init__(self, connection_string=None):
         super(BrickLayer, self).__init__()
 
+        self.batch_size = 10000
         self.insert_statements = {
             'crash': 'INSERT INTO Crash VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             'rollup': 'INSERT INTO Rollup VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
@@ -94,9 +95,32 @@ class BrickLayer(object):
 
         command = self.insert_statements[table_name.lower()]
 
+        i = 1
+        start = 0
+        end = self.batch_size
         try:
-            cursor.executemany(command, rows)
-            connection.commit()
+            print 'total rows to insert {}'.format(len(rows))
+
+            while start < len(rows):
+                batched_rows = rows[start:end]
+
+                cursor.executemany(command, batched_rows)
+                connection.commit()
+
+                i = i + 1
+                start = end
+                end = i * self.batch_size + 1
+        except:
+            # import pprint
+            # pp = pprint.PrettyPrinter(indent=4)
+            # pp.pprint(batched_rows)
+
+            print '{} {}-{}'.format(table_name, start, end)
+
+            from nose.tools import set_trace
+            set_trace()
+
+            raise
         finally:
             cursor.close()
             connection.close()

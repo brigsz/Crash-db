@@ -76,7 +76,7 @@ class TestDbSeeder(unittest.TestCase):
             0
         ]
 
-        actual = self.patient._etl_row(join('some', 'path', 'to', 'rollup.csv'), row)
+        actual = self.patient._etl_row('rollup', row)
         self.assertEqual(actual, expected)
 
     def test_etl_crash(self):
@@ -155,7 +155,7 @@ class TestDbSeeder(unittest.TestCase):
             4466748.0
         ]
 
-        actual = self.patient._etl_row(join('some', 'path', 'to', 'crash.csv'), row)
+        actual = self.patient._etl_row('crash', row)
         self.assertEqual(actual, expected)
 
     def test_etl_driver(self):
@@ -188,11 +188,11 @@ class TestDbSeeder(unittest.TestCase):
             'None'
         ]
 
-        actual = self.patient._etl_row(join('some', 'path', 'to', 'drivers.csv'), row)
+        actual = self.patient._etl_row('driver', row)
         self.assertEqual(actual, expected)
 
     def test_etl_wrong_file_name(self):
-        self.assertRaises(Exception, self.patient._etl_row, join('some', 'path', 'wrong.csv'))
+        self.assertRaises(Exception, self.patient._etl_row, 'wrong')
 
     def test_get_files_without_trailing_slashes(self):
         actual = self.patient._get_files(join('.', 'tests', 'data'))
@@ -209,3 +209,30 @@ class TestDbSeeder(unittest.TestCase):
 
     def test_get_files_raises_if_empty(self):
         self.assertRaises(Exception, self.patient._get_files, [join('some', 'path', 'to', 'nowhere')])
+
+    def test_get_table_name(self):
+        actual = self.patient._get_table_name('balksdfj;lkasdf_driver')
+        self.assertEqual(actual, 'driver')
+
+        actual = self.patient._get_table_name('balksdfj;lkasdf_crash_234234')
+        self.assertEqual(actual, 'crash')
+
+        actual = self.patient._get_table_name('balksdfj;lkasdf_rollupasdf213')
+        self.assertEqual(actual, 'rollup')
+
+        actual = self.patient._get_table_name('balksdfj;lkasdf_rupasdf213')
+        self.assertIsNone(actual)
+
+    def test_get_lengths(self):
+        actual = self.patient.get_lengths(join('.', 'tests', 'data'))['crash']
+
+        expected = {
+            'CASE_NUMBER': 92,
+            'CITY': 11,
+            'COUNTY_NAME': 9,
+            'MAIN_ROAD_NAME': 11,
+            'OFFICER_DEPARTMENT_CODE': 9,
+            'OFFICER_DEPARTMENT_NAME': 13
+        }
+
+        self.assertEqual(actual, expected)

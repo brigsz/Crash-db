@@ -19,7 +19,15 @@ def main(argv=()):
     print(argv)
 
     seeder = DbSeeder()
-    seeder.process(argv[1])
+
+    if '--length' in argv:
+        argv.remove('--length')
+        print(argv)
+
+        seeder.get_lengths(argv[1])
+
+    else:
+        seeder.process(argv[1])
 
     return 0
 
