@@ -115,7 +115,7 @@ CREATE TABLE [dbo].[Rollup](
 	[animal_wild] [bit] NULL,
 	[animal_domestic] [bit] NULL,
 	[rollover] [bit] NULL,
-	[commercial_vehical] [bit] NULL,
+	[commercial_vehicle] [bit] NULL,
 	[teenager] [bit] NULL,
 	[elder] [bit] NULL,
 	[dark] [bit] NULL,
